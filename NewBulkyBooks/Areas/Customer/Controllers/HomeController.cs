@@ -27,7 +27,16 @@ namespace NewBulkyBooks.Areas.Customer.Controllers
 			IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties:"CoverType,Category");
 			return View(productList);
 		}
-
+		public IActionResult Details(int id)
+		{
+			var productFroMDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id, includeProperties: "CoverType,Category");
+			ShoppingCart cartObj = new ShoppingCart()
+			{
+				Product = productFroMDb,
+				ProductId = productFroMDb.Id
+			};
+			return View(cartObj);
+		}
 		public IActionResult Privacy()
 		{
 			return View();

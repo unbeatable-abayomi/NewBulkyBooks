@@ -13,6 +13,10 @@ namespace NewBulkyBooks.DataAccess.Repository.IRepository
         IProductRepository Product { get; }
         ICompanyRepository Company { get; }
         IApplicationUserRepository ApplicationUser { get; }
-       void Save();
+
+        IOrderDetailsRepository OrderDetails { get; }
+        IOrderHeaderRepository OrderHeader { get; }
+        IShoppingCartRepository ShoppingCart { get;}
+        void Save();
     }
 }
