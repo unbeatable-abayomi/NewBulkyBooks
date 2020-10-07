@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace NewBulkyBooks.Models
 {
-    public class Product
-    {
+	public class Product
+	{
 
 		public int Id { get; set; }
 		[Required]
 		public string Title { get; set; }
+		[Required]
 		public string Description { get; set; }
 		[Required]
 		public string ISBN { get; set; }
@@ -39,14 +40,14 @@ namespace NewBulkyBooks.Models
 
 
 		[Display(Name = " Category Type")]
-        public int CategoryId { get; set; }
-        [ForeignKey("CategoryId")]
+		public int CategoryId { get; set; }
+		[ForeignKey("CategoryId")]
 
-        public Category Category { get; set; }
-        [Display(Name = "Cover Type")]
-        public int CoverTypeId { get; set; }
-        [ForeignKey("CoverTypeId")]
+		public Category Category { get; set; }
+		[Display(Name = "Cover Type")]
+		public int CoverTypeId { get; set; }
+		[ForeignKey("CoverTypeId")]
 
-        public CoverType CoverType { get; set; }
-    }
+		public CoverType CoverType { get; set; }
+	}
 }
