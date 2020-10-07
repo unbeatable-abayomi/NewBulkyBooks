@@ -5,11 +5,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NewBulkyBooks.DataAccess.Repository.IRepository;
 using NewBulkyBooks.Models;
 using NewBulkyBooks.Models.ViewModels;
+using NewBulkyBooks.Utility;
 
 namespace NewBulkyBooks.Areas.Customer.Controllers
 {
@@ -27,7 +29,15 @@ namespace NewBulkyBooks.Areas.Customer.Controllers
 		public IActionResult Index()
 		{
 			IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties:"CoverType,Category");
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+			if (claim != null)
+			{
+				var count = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value).ToList().Count();
+				HttpContext.Session.SetInt32(SD.ssShoppingCart, count);
+			}
 			return View(productList);
+
 		}
 		[HttpGet]
 		public IActionResult Details(int id)
@@ -68,6 +78,10 @@ namespace NewBulkyBooks.Areas.Customer.Controllers
 
 				}
 				_unitOfWork.Save();
+				var count = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == CartObject.ApplicationUserId).ToList().Count();
+				//HttpContext.Session.SetObject(SD.ssShoppingCart, count);
+				HttpContext.Session.SetInt32(SD.ssShoppingCart, count);// this only sets an integer
+				//  var obj = HttpContext.Session.GetObject<ShoppingCart>(SD.ssShoppingCart); GetObject and SetObjec can be used on any type,e.g int,List or Ienumerable 
 				return RedirectToAction(nameof(Index));
 			}
 			else
