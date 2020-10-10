@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace NewBulkyBooks.Models
 {
-    public class OrderDetails
-    {
+	public class OrderDetails
+	{
 		[Key]
 		public int Id { get; set; }
 

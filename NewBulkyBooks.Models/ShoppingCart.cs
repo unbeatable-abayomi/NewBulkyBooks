@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace NewBulkyBooks.Models
 {
-    public class ShoppingCart
-    {
+	public class ShoppingCart
+	{
 		public ShoppingCart()
 		{
 			Count = 1;

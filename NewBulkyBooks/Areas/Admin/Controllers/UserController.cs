@@ -18,7 +18,7 @@ namespace NewBulkyBooks.Areas.Admin.Controllers
 	[Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
 
 	public class UserController : Controller
-    {
+	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly ApplicationDbContext _db;
 
