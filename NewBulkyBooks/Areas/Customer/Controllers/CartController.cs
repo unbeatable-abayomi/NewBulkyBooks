@@ -110,12 +110,14 @@ namespace NewBulkyBooks.Areas.Customer.Controllers
 			if(cart.Count == 1)
 			{
 				var cnt = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count();
+				
 				_unitOfWork.ShoppingCart.Remove(cart);
 				_unitOfWork.Save();
 				HttpContext.Session.SetInt32(SD.ssShoppingCart, cnt - 1);
 			}
 			else
 			{
+				
 				cart.Count -= 1;
 				cart.Price = SD.GetPriceBasedOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
 				_unitOfWork.Save();
@@ -135,6 +137,35 @@ namespace NewBulkyBooks.Areas.Customer.Controllers
 				HttpContext.Session.SetInt32(SD.ssShoppingCart, cnt - 1);
 			
 			return RedirectToAction(nameof(Index));
+		}
+
+
+		public IActionResult Summary()
+		{
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+			ShoppingCartVM = new ShoppingCartVM()
+			{
+				OrderHeader = new Models.OrderHeader(),
+				ListCart = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claims.Value,includeProperties:"Product")
+
+			};
+			ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(c => c.Id == claims.Value,includeProperties: "Company");
+
+
+			foreach (var list in ShoppingCartVM.ListCart)
+			{
+				//list.Product = _unitOfWork.Product.GetFirstOrDefault();
+				list.Price = SD.GetPriceBasedOnQuantity(list.Count, list.Product.Price, list.Product.Price50, list.Product.Price100);
+				ShoppingCartVM.OrderHeader.OrderTotal += (list.Price * list.Count);
+			}
+			ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
+			ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
+			ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.ApplicationUser.StreetAddress;
+			ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City;
+			ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.ApplicationUser.State;
+			ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
+			return View(ShoppingCartVM);
 		}
 	}
 }

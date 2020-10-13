@@ -16,6 +16,7 @@ using NewBulkyBooks.DataAccess.Repository;
 using NewBulkyBooks.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using NewBulkyBooks.Utility;
+using Stripe;
 
 namespace NewBulkyBooks
 {
@@ -39,6 +40,7 @@ namespace NewBulkyBooks
 			services.AddControllersWithViews();
 			services.AddSingleton<IEmailSender,EmailSender>();
 			services.Configure<EmailOptions>(Configuration);
+			services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddRazorPages();
 			services.ConfigureApplicationCookie(options =>
@@ -87,6 +89,7 @@ namespace NewBulkyBooks
 			app.UseStaticFiles();
 
 			app.UseRouting();
+			StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["SecretKey"];
 			app.UseSession();
 			app.UseAuthentication();
 			app.UseAuthorization();
