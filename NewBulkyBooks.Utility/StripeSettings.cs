@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace NewBulkyBooks.Utility
 {
-    public class StripeSettings
-    {
+	public class StripeSettings
+	{
 		public string SecretKey { get; set; }
 		public string PublishableKey { get; set; }
 	}
