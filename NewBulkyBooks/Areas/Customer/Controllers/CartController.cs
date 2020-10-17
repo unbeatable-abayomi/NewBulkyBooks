@@ -68,6 +68,7 @@ namespace NewBulkyBooks.Areas.Customer.Controllers
 
 		[HttpPost]
 		[ActionName("Index")]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> IndexPOST()
 		{
 			var claimsIdentity = (ClaimsIdentity)User.Identity;
