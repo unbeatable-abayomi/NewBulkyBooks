@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace NewBulkyBooks.DataAccess.Repository
 {
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
-    {
+	public class CategoryRepository : Repository<Category>, ICategoryRepository
+	{
 		private readonly ApplicationDbContext _db;
 		public CategoryRepository(ApplicationDbContext db) : base(db)
 		{
