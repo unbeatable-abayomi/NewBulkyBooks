@@ -4,6 +4,7 @@ using NewBulkyBooks.DataAccess.Repository.IRepository;
 using NewBulkyBooks.Models;
 using NewBulkyBooks.Models.ViewModels;
 using NewBulkyBooks.Utility;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,56 @@ namespace NewBulkyBooks.Areas.Admin.Controllers
 			return View();
 		}
 
+
+		[Authorize(Roles =SD.Role_Admin+""+SD.Role_Employee)]
+		public IActionResult StartProcessing(int id)
+		{
+			OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
+			orderHeader.OrderStatus = SD.StatusInProcess;
+			_unitOfWork.Save();
+			return RedirectToAction("Index");
+		}
+
+		[HttpPost]
+		[Authorize(Roles = SD.Role_Admin + "" + SD.Role_Employee)]
+		public IActionResult ShipOrder(int id)
+		{
+			OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
+			orderHeader.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
+			orderHeader.Carrier = OrderVM.OrderHeader.TrackingNumber;
+			orderHeader.OrderStatus = SD.StatusShipped;
+
+			orderHeader.ShippingDate = DateTime.Now;
+			_unitOfWork.Save();
+			return RedirectToAction("Index");
+		}
+
+		[Authorize(Roles = SD.Role_Admin + "" + SD.Role_Employee)]
+		public IActionResult CancelOrder(int id)
+		{
+			OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
+			if (orderHeader.PaymentStatus == SD.StatusApproved)
+			{
+				var options = new RefundCreateOptions
+				{
+					Amount = Convert.ToInt32(orderHeader.OrderTotal * 100),
+					Reason = RefundReasons.RequestedByCustomer,
+					Charge = orderHeader.TransactionID
+				};
+				var service = new RefundService();
+				Refund refund = service.Create(options);
+				orderHeader.OrderStatus = SD.StatusRefunded;
+				orderHeader.PaymentStatus = SD.StatusRefunded;
+			}
+			else
+			{
+				orderHeader.OrderStatus = SD.StatusCancelled;
+				orderHeader.PaymentStatus = SD.StatusRefunded;
+			}
+			orderHeader.OrderStatus = SD.StatusInProcess;
+			_unitOfWork.Save();
+			return RedirectToAction("Index");
+		}
 		public IActionResult Details(int id)
 		{
 			OrderVM = new OrderDetailsVM()
