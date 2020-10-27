@@ -192,7 +192,7 @@ namespace NewBulkyBooks.Areas.Customer.Controllers
 
 
 
-			List<OrderDetails> orderDetailsList = new List<OrderDetails>();
+			//List<OrderDetails> orderDetailsList = new List<OrderDetails>();
 
 			foreach (var item in ShoppingCartVM.ListCart)
 			{

@@ -1,7 +1,39 @@
 ﻿@{
 
 	Layout = "~/Views/Shared/_Layout.cshtml";
-}
+
+	var status = Context.Request.Query["status"];
+
+	//var approved = "text-primary";
+	var pending = "text-primary";
+	var all = "text-primary";
+	var inprocess = "text-primary";
+	var completed = "text-primary";
+	var rejected = "text-primary";
+
+	switch (status)
+	{
+		case "pending":
+			pending = "active text-white";
+			break;
+		case "inprocess":
+			inprocess = "active text-white";
+			break;
+		case "completed":
+			completed = "active text-white";
+			break;
+		case "rejected":
+			rejected = "active text-white";
+			break;
+		default:
+			all = "active text-white";
+			break;
+
+
+
+	}
+
+	}
 
 <br />
 
@@ -11,38 +43,63 @@
 			<h2 class="text-primary">Order's List</h2>
 		</div>
 		<div class="p-2">
-			<ul class="list-groug list-group-horizontal-sm">
-				<a style="text-decoration:none" asp-controller="Order" asp-action="Index" asp-route-status="inprocess">
-
-					<li class="list-groug-item">
+			<ul class="list-groug d-flex list-group-horizontal-sm">
+				<a style="text-decoration:none" asp-controller="Order"
+				   asp-action="Index" asp-route-status="inprocess">
+					<li class="list-group-item @inprocess">
 						In Process
+					</li>
+				</a>
+				<a style="text-decoration:none" asp-controller="Order"
+				   asp-action="Index" asp-route-status="pending">
+					<li class="list-group-item @pending">
+						Payment Pending
+					</li>
+				</a>
+				<a style="text-decoration:none" asp-controller="Order"
+				   asp-action="Index" asp-route-status="completed">
+					<li class="list-group-item @completed">
+						Completed
+					</li>
+				</a>
+				<a style="text-decoration:none" asp-controller="Order"
+				   asp-action="Index" asp-route-status="rejected">
+					<li class="list-group-item @rejected">
+						Rejected
+					</li>
+				</a>
+				<a style="text-decoration:none" asp-controller="Order"
+				   asp-action="Index" asp-route-status="all">
+					<li class="list-group-item @all">
+						All
 					</li>
 				</a>
 			</ul>
 		</div>
 	</div>
-</div>
-<div class="row">
-	<div class="col-6">
-		<h2 class="text-primary">Category List </h2>
-	</div>
-	<div class="col-6 text-right">
-		<a class="btn btn-primary" asp-action="Upsert"><i class="fas fa-plus"></i> &nbsp; Create New Category</a>
-	</div>
-</div>
-
-<br />
-<div class="p-4 border rounded">
+	<br />
+	
 	<table id="tblData" class="table table-striped table-bordered" style="width:100%">
 		<thead class="thead-dark">
 			<tr class="table-info">
+				<th>Id</th>
 				<th>Name</th>
+				<th>Phone Number</th>
+				<th>Email</th>
+				<th>Order Status</th>
+				<th>Amount</th>
 				<th></th>
 			</tr>
 		</thead>
 	</table>
 </div>
 
+
+
+@*<div class="p-4 border rounded">
+
+</div>*@
+
 @section Scripts {
-	<script src="~/js/category.js"></script>
+	<script src="~/js/order.js"></script>
 }
