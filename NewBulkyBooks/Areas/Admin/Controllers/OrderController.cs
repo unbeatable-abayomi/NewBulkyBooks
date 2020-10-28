@@ -33,7 +33,8 @@ namespace NewBulkyBooks.Areas.Admin.Controllers
 		}
 
 
-		[Authorize(Roles =SD.Role_Admin+""+SD.Role_Employee)]
+		
+		[Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
 		public IActionResult StartProcessing(int id)
 		{
 			OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
@@ -43,12 +44,12 @@ namespace NewBulkyBooks.Areas.Admin.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Roles = SD.Role_Admin + "" + SD.Role_Employee)]
-		public IActionResult ShipOrder(int id)
+		[Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+		public IActionResult ShipOrder()
 		{
-			OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
+			OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == OrderVM.OrderHeader.Id);
 			orderHeader.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
-			orderHeader.Carrier = OrderVM.OrderHeader.TrackingNumber;
+			orderHeader.Carrier = OrderVM.OrderHeader.Carrier;
 			orderHeader.OrderStatus = SD.StatusShipped;
 
 			orderHeader.ShippingDate = DateTime.Now;
@@ -56,7 +57,7 @@ namespace NewBulkyBooks.Areas.Admin.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[Authorize(Roles = SD.Role_Admin + "" + SD.Role_Employee)]
+		[Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
 		public IActionResult CancelOrder(int id)
 		{
 			OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
